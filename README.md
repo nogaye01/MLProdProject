@@ -40,7 +40,7 @@ Navigate to the `frontend` directory and install the required Node.js dependenci
 ```bash
 cd frontend
 npm install
-npm run dev 
+npm start 
 ```
 
 ### 3. Backend Setup
