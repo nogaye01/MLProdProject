@@ -3,30 +3,26 @@ import './App.css';
 
 function App() {
   const [formData, setFormData] = useState({
+    area: '',
     bedrooms: '',
     bathrooms: '',
-    sqft: '',
-    location: ''
+    stories: '',
+    mainroad: '',
+    guestroom: '',
+    basement: '',
+    hotwaterheating: '',
+    airconditioning: '',
   });
 
   const [prediction, setPrediction] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (e.target.type === 'number' && value < 0) {
-      return; // Prevent negative values
-    }
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Ensure no negative values before submitting
-    if (formData.bedrooms < 0 || formData.bathrooms < 0 || formData.sqft < 0) {
-      alert('Please enter positive values only.');
-      return;
-    }
 
     try {
       const response = await fetch('http://localhost:8000/predict', {
@@ -37,7 +33,11 @@ function App() {
         body: JSON.stringify(formData),
       });
       const data = await response.json();
-      setPrediction(data.predicted_price);
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+      } else {
+        setPrediction(data.predicted_price);
+      }
     } catch (error) {
       console.error('Error fetching prediction:', error);
     }
@@ -47,6 +47,17 @@ function App() {
     <div className="app-container">
       <h1>House Price Predictor</h1>
       <form className="form-container" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="area">Area:</label>
+          <input
+            type="number"
+            id="area"
+            name="area"
+            value={formData.area}
+            onChange={handleChange}
+            required
+          />
+        </div>
         <div className="form-group">
           <label htmlFor="bedrooms">Bedrooms:</label>
           <input
@@ -70,28 +81,89 @@ function App() {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="sqft">Square Footage:</label>
+          <label htmlFor="stories">Stories:</label>
           <input
             type="number"
-            id="sqft"
-            name="sqft"
-            value={formData.sqft}
+            id="stories"
+            name="stories"
+            value={formData.stories}
             onChange={handleChange}
             required
           />
         </div>
         <div className="form-group">
-          <label htmlFor="location">Location:</label>
-          <input
-            type="text"
-            id="location"
-            name="location"
-            value={formData.location}
+          <label htmlFor="mainroad">Main Road:</label>
+          <select
+            id="mainroad"
+            name="mainroad"
+            value={formData.mainroad}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">Select</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
         </div>
-        <button type="submit" className="submit-button">Predict Price</button>
+        <div className="form-group">
+          <label htmlFor="guestroom">Guest Room:</label>
+          <select
+            id="guestroom"
+            name="guestroom"
+            value={formData.guestroom}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="basement">Basement:</label>
+          <select
+            id="basement"
+            name="basement"
+            value={formData.basement}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="hotwaterheating">Hot Water Heating:</label>
+          <select
+            id="hotwaterheating"
+            name="hotwaterheating"
+            value={formData.hotwaterheating}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="airconditioning">Air Conditioning:</label>
+          <select
+            id="airconditioning"
+            name="airconditioning"
+            value={formData.airconditioning}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <button type="submit" className="submit-button">
+          Predict Price
+        </button>
       </form>
       {prediction && (
         <div className="prediction-result">

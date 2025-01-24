@@ -91,3 +91,19 @@ input:focus {
   font-weight: bold;
   margin: 0;
 }
+
+select {
+  width: 100%;
+  padding: 0.4rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.3s;
+  background-color: #fff;
+  color: #333;
+}
+
+select:focus {
+  border-color: #3498db;
+}
