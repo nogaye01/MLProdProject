@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1737834540303
+current_stage: Production
+description: null
+last_updated_timestamp: 1737834540378
+name: LinearRegressionModel
+run_id: 793917c98e0d43e48668d19db35383f2
+run_link: null
+source: file:///c:/Users/nadit/Downloads/HousePricePredictor/model/mlruns/740511784355330769/793917c98e0d43e48668d19db35383f2/artifacts/LinearRegressionModel
+status: READY
+status_message: null
+storage_location: file:///c:/Users/nadit/Downloads/HousePricePredictor/model/mlruns/740511784355330769/793917c98e0d43e48668d19db35383f2/artifacts/LinearRegressionModel
+user_id: null
+version: 2

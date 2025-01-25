@@ -1,0 +1,15 @@
+artifact_uri: file:///c:/Users/nadit/Downloads/HousePricePredictor/model/mlruns/740511784355330769/793917c98e0d43e48668d19db35383f2/artifacts
+end_time: 1737834540464
+entry_point_name: ''
+experiment_id: '740511784355330769'
+lifecycle_stage: active
+run_id: 793917c98e0d43e48668d19db35383f2
+run_name: Linear Regression Model
+run_uuid: 793917c98e0d43e48668d19db35383f2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1737834530145
+status: 3
+tags: []
+user_id: nada912
