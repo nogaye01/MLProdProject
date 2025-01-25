@@ -12,6 +12,9 @@ function App() {
     basement: '',
     hotwaterheating: '',
     airconditioning: '',
+    parking: '',
+    prefarea: '',
+    furnishingstatus: '',
   });
 
   const [prediction, setPrediction] = useState(null);
@@ -159,6 +162,46 @@ function App() {
             <option value="">Select</option>
             <option value="yes">Yes</option>
             <option value="no">No</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="parking">Parking:</label>
+          <input
+            type="number"
+            id="parking"
+            name="parking"
+            value={formData.parking}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="prefarea">Preferred Area:</label>
+          <select
+            id="prefarea"   
+            name="prefarea"
+            value={formData.prefarea}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label htmlFor="furnishingstatus">Furnishing Status:</label>
+          <select
+            id="furnishingstatus" 
+            name="furnishingstatus"
+            value={formData.furnishingstatus}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select</option>
+            <option value="furnished">Furnished</option>
+            <option value="semi-furnished">Semi-Furnished</option>
+            <option value="unfurnished">Unfurnished</option>
           </select>
         </div>
         <button type="submit" className="submit-button">
