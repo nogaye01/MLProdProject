@@ -10,9 +10,9 @@ Before you can run this project, ensure that you have the following installed:
 - **npm** 
 - **Python** 
 - **pip** 
-- **docker**
+- **Docker**
 - **git**
-- **supabase**
+- **Supabase**
 
 ## Setup Instructions
 
