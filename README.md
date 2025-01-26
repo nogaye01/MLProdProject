@@ -12,25 +12,30 @@ Before you can run this project, ensure that you have the following installed:
 - **pip** 
 - **docker**
 - **git**
-- **PostgreSQL** installed locally to be able to install `psycopg2` package
+- **supabase**
 
 ## Setup Instructions
 
 ### 1. Environment variables
 
-You need to setup `.env` in the root of both the backend and the frontend folders.
-
-#### Frontend `.env` example
-
-```env
-VITE_API_BASE_URL=http://localhost:xxx  # Backend API URL
-```
+You need to setup `.env` in the root of the backend folder.
 
 #### Backend `.env` example
 
 ```env
-DATABASE_URL=postgresql://postgres.xxx 
-JWT_SECRET_KEY=xxx
+MLFLOW_TRACKING_URI=https://dagshub.com/###/####.mlflow
+MLFLOW_EXPERIMENT_NAME=#####
+
+AWS_ACCESS_KEY_ID=#######
+AWS_SECRET_ACCESS_KEY=########
+AWS_BUCKET_NAME=s3://########
+AWS_REGION=##-####-#
+
+DAGSHUB_TOKEN=#########
+DAGSHUB_USERNAME=######
+
+SUPABASE_URL=https://##########.supabase.co
+SUPABASE_KEY=################
 ```
 
 ### 2. Frontend Setup
