@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import mlflow
 import mlflow.pyfunc
 from flask_cors import CORS
+from supabase_client import save_to_supabase
 
 # Load environment variables
 load_dotenv()
@@ -25,25 +26,56 @@ loaded_model = None
 
 
 def preload_model():
-    """Preload the model from MLflow during app startup."""
+    #load the model from directory
     global loaded_model
     try:
-        # Fetch the latest model version from MLflow Model Registry
-        client = mlflow.tracking.MlflowClient()
+        # list the models inside the models folder
+        local_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "backend", "models")
+        model_name = os.listdir(local_path)[0]
+        print(f"Model Name: {model_name}")
 
-        # Get all versions of the model
-        versions = client.get_registered_model(MODEL_NAME).latest_versions
+        #load the model using sklearn
+        loaded_model = mlflow.sklearn.load_model(local_path + "/" + model_name)
+        print("Model loaded successfully")
 
-        # Sort the versions to get the latest one (by version number)
-        latest_version = sorted(versions, key=lambda v: v.version, reverse=True)[0]
-
-        # Load the latest model
-        model_uri = f"models:/{MODEL_NAME}/{latest_version.version}"
-        loaded_model = mlflow.pyfunc.load_model(model_uri)
-        print(f"Model version {latest_version.version} loaded successfully from MLflow!")
     except Exception as e:
-        print(f"Error loading model from MLflow: {str(e)}")
-        raise
+        print(f"Error loading the model: {e}")
+
+
+def preprocess_input(data):
+    """
+    Preprocess the input data from the front end to match the 23 features expected by the model.
+    """
+    # Initialize all features with default values
+    features = {
+        'area': int(data.get('area', 0)),
+        'mainroad': 1 if data.get('mainroad', '').lower() == 'yes' else 0,
+        'guestroom': 1 if data.get('guestroom', '').lower() == 'yes' else 0,
+        'basement': 1 if data.get('basement', '').lower() == 'yes' else 0,
+        'hotwaterheating': 1 if data.get('hotwaterheating', '').lower() == 'yes' else 0,
+        'airconditioning': 1 if data.get('airconditioning', '').lower() == 'yes' else 0,
+        'prefarea': 1 if data.get('prefarea', '').lower() == 'yes' else 0,
+        'furnishingstatus_semi-furnished': 1 if data.get('furnishingstatus', '').lower() == 'semi-furnished' else 0,
+        'furnishingstatus_unfurnished': 1 if data.get('furnishingstatus', '').lower() == 'unfurnished' else 0,
+        'bathrooms_2': 1 if int(data.get('bathrooms', 0)) == 2 else 0,
+        'bathrooms_3': 1 if int(data.get('bathrooms', 0)) == 3 else 0,
+        'bathrooms_4': 1 if int(data.get('bathrooms', 0)) == 4 else 0,
+        'stories_2': 1 if int(data.get('stories', 0)) == 2 else 0,
+        'stories_3': 1 if int(data.get('stories', 0)) == 3 else 0,
+        'stories_4': 1 if int(data.get('stories', 0)) == 4 else 0,
+        'parking_1': 1 if int(data.get('parking', 0)) == 1 else 0,
+        'parking_2': 1 if int(data.get('parking', 0)) == 2 else 0,
+        'parking_3': 1 if int(data.get('parking', 0)) == 3 else 0,
+        'bedrooms_2': 1 if int(data.get('bedrooms', 0)) == 2 else 0,
+        'bedrooms_3': 1 if int(data.get('bedrooms', 0)) == 3 else 0,
+        'bedrooms_4': 1 if int(data.get('bedrooms', 0)) == 4 else 0,
+        'bedrooms_5': 1 if int(data.get('bedrooms', 0)) == 5 else 0,
+        'bedrooms_6': 1 if int(data.get('bedrooms', 0)) == 6 else 0
+    }
+
+    # Convert the feature dictionary to a NumPy array for prediction
+    input_array = np.array(list(features.values())).reshape(1, -1)
+    return input_array
 
 
 @app.route('/predict', methods=['POST'])
@@ -58,28 +90,19 @@ def predict():
         # Get the data from the request
         data = request.get_json()
 
-        # Extract input values from the JSON request
-        area = float(data.get('area', 0))
-        bedrooms = float(data.get('bedrooms', 0))
-        bathrooms = float(data.get('bathrooms', 0))
-        stories = float(data.get('stories', 0))
-        mainroad = 1 if data.get('mainroad', '').lower() == 'yes' else 0
-        guestroom = 1 if data.get('guestroom', '').lower() == 'yes' else 0
-        basement = 1 if data.get('basement', '').lower() == 'yes' else 0
-        hotwaterheating = 1 if data.get('hotwaterheating', '').lower() == 'yes' else 0
-        airconditioning = 1 if data.get('airconditioning', '').lower() == 'yes' else 0
-
-        # Combine all features into a single input array
-        input_features = np.array([area, bedrooms, bathrooms, stories, mainroad, guestroom, basement, hotwaterheating, airconditioning]).reshape(1, -1)
+        # Preprocess the data
+        input_features = preprocess_input(data)
 
         # Make prediction using the model
         predicted_price = loaded_model.predict(input_features)[0]
+
+        # Save prediction to Supabase
+        save_to_supabase(data, round(predicted_price, 2))
 
         # Return the predicted price as JSON
         return jsonify({"predicted_price": round(predicted_price, 2)})
 
     except Exception as e:
-        # Return error response if an exception occurs
         return jsonify({"error": str(e)}), 400
 
 
