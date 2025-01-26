@@ -96,11 +96,14 @@ def predict():
         # Make prediction using the model
         predicted_price = loaded_model.predict(input_features)[0]
 
+        # Ensure the prediction is returned as an integer
+        predicted_price_int = int(round(predicted_price))
+
         # Save prediction to Supabase
-        save_to_supabase(data, round(predicted_price, 2))
+        save_to_supabase(data, predicted_price_int)
 
         # Return the predicted price as JSON
-        return jsonify({"predicted_price": round(predicted_price, 2)})
+        return jsonify({"predicted_price": predicted_price_int})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
