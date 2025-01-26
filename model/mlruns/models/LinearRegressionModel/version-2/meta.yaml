@@ -1,8 +1,8 @@
 aliases: []
 creation_timestamp: 1737834540303
-current_stage: Production
+current_stage: Archived
 description: null
-last_updated_timestamp: 1737834540378
+last_updated_timestamp: 1737920369536
 name: LinearRegressionModel
 run_id: 793917c98e0d43e48668d19db35383f2
 run_link: null
