@@ -21,11 +21,20 @@ function App() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (e.target.type === 'number' && value < 0) {
+      return; // Prevent negative values
+    }
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Ensure no negative values before submitting
+    if (formData.bedrooms < 0 || formData.bathrooms < 0 || formData.sqft < 0) {
+      alert('Please enter positive values only.');
+      return;
+    }
 
     try {
       const response = await fetch('http://localhost:8000/predict', {
