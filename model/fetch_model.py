@@ -35,8 +35,8 @@ def fetch_production_model():
                 model_uri = latest_version.source  # Use the source URI directly
                 print(f"Model URI: {model_uri}")
 
-                # Define a local path to download the model
-                local_path = f"models/{model_name}"
+                # exit the current folder and download the model in the backend folder
+                local_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "backend", "models")
                 os.makedirs(local_path, exist_ok=True)
                 # does the path exit ?
                 print(f"Path Exists: {os.path.exists(local_path)}")
@@ -47,7 +47,7 @@ def fetch_production_model():
 
                 print(f"Model '{model_name}' version {latest_version.version} in Production downloaded successfully to {local_path}")
                 return local_path, model_name  # Return the local path and model name for further use
-
+            
         raise Exception("No models found in the Production stage.")
     except Exception as e:
         print(f"Error fetching the model: {str(e)}")
