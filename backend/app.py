@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import numpy as np
+import pandas as pd
 import os
 from dotenv import load_dotenv
 import mlflow
@@ -24,17 +25,27 @@ mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 # Global variable to store the preloaded model
 loaded_model = None
 
+# Define feature names in the expected order
+FEATURE_NAMES = [
+    'area', 'mainroad', 'guestroom', 'basement', 'hotwaterheating',
+    'airconditioning', 'prefarea', 'furnishingstatus_semi_furnished',
+    'furnishingstatus_unfurnished', 'bathrooms_2', 'bathrooms_3',
+    'bathrooms_4', 'stories_2', 'stories_3', 'stories_4', 'parking_1',
+    'parking_2', 'parking_3', 'bedrooms_2', 'bedrooms_3', 'bedrooms_4',
+    'bedrooms_5', 'bedrooms_6'
+]
+
 
 def preload_model():
-    #load the model from directory
+    """Load the model from the local directory."""
     global loaded_model
     try:
-        # list the models inside the models folder
+        # Locate the model in the models folder
         local_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "backend", "models")
-        model_name = os.listdir(local_path)[0]
+        model_name = os.listdir(local_path)[1]
         print(f"Model Name: {model_name}")
 
-        #load the model using sklearn
+        # Load the model using MLflow
         loaded_model = mlflow.sklearn.load_model(local_path + "/" + model_name)
         print("Model loaded successfully")
 
@@ -45,37 +56,27 @@ def preload_model():
 def preprocess_input(data):
     """
     Preprocess the input data from the front end to match the 23 features expected by the model.
+    Ensures that all values (except 'area') are either True (1) or False (0).
     """
     # Initialize all features with default values
-    features = {
-        'area': int(data.get('area', 0)),
-        'mainroad': 1 if data.get('mainroad', '').lower() == 'yes' else 0,
-        'guestroom': 1 if data.get('guestroom', '').lower() == 'yes' else 0,
-        'basement': 1 if data.get('basement', '').lower() == 'yes' else 0,
-        'hotwaterheating': 1 if data.get('hotwaterheating', '').lower() == 'yes' else 0,
-        'airconditioning': 1 if data.get('airconditioning', '').lower() == 'yes' else 0,
-        'prefarea': 1 if data.get('prefarea', '').lower() == 'yes' else 0,
-        'furnishingstatus_semi-furnished': 1 if data.get('furnishingstatus', '').lower() == 'semi-furnished' else 0,
-        'furnishingstatus_unfurnished': 1 if data.get('furnishingstatus', '').lower() == 'unfurnished' else 0,
-        'bathrooms_2': 1 if int(data.get('bathrooms', 0)) == 2 else 0,
-        'bathrooms_3': 1 if int(data.get('bathrooms', 0)) == 3 else 0,
-        'bathrooms_4': 1 if int(data.get('bathrooms', 0)) == 4 else 0,
-        'stories_2': 1 if int(data.get('stories', 0)) == 2 else 0,
-        'stories_3': 1 if int(data.get('stories', 0)) == 3 else 0,
-        'stories_4': 1 if int(data.get('stories', 0)) == 4 else 0,
-        'parking_1': 1 if int(data.get('parking', 0)) == 1 else 0,
-        'parking_2': 1 if int(data.get('parking', 0)) == 2 else 0,
-        'parking_3': 1 if int(data.get('parking', 0)) == 3 else 0,
-        'bedrooms_2': 1 if int(data.get('bedrooms', 0)) == 2 else 0,
-        'bedrooms_3': 1 if int(data.get('bedrooms', 0)) == 3 else 0,
-        'bedrooms_4': 1 if int(data.get('bedrooms', 0)) == 4 else 0,
-        'bedrooms_5': 1 if int(data.get('bedrooms', 0)) == 5 else 0,
-        'bedrooms_6': 1 if int(data.get('bedrooms', 0)) == 6 else 0
-    }
+    features = {}
+    
+    for feature in FEATURE_NAMES:
+        if feature == 'area':
+            # 'area' is treated as a numeric value
+            features[feature] = int(data.get(feature, 0))
+        else:
+            # For other features, treat them as True/False
+            feature_value = data.get(feature, '').lower()
+            if feature_value in ['yes', '1', 'true']:
+                features[feature] = 1
+            else:
+                features[feature] = 0
 
-    # Convert the feature dictionary to a NumPy array for prediction
-    input_array = np.array(list(features.values())).reshape(1, -1)
-    return input_array
+    # Convert the feature dictionary to a pandas DataFrame
+    input_df = pd.DataFrame([features], columns=FEATURE_NAMES)
+
+    return input_df
 
 
 @app.route('/predict', methods=['POST'])
@@ -84,6 +85,7 @@ def predict():
     try:
         global loaded_model
 
+        # Check if the model is loaded
         if loaded_model is None:
             raise ValueError("Model not loaded. Please check server logs for errors during model initialization.")
 
