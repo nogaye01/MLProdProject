@@ -1,0 +1,62 @@
+name: CI/CD on Dev branch
+on:
+  pull_request:
+    branches:
+      - dev
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-test-on-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
+
+      - name: Run unit tests
+        run: pytest tests/unit/
+
+      - name: Start API
+        run: uvicorn backend.api:app --host 0.0.0.0 --port 8000 &
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        shell: bash
+
+      - name: Wait for API to be ready
+        run: |
+          until curl -s http://127.0.0.1:8000/metrics; do
+            echo "Waiting for API to be ready..."
+            sleep 2
+          done
+        shell: bash
+
+      - name: Run integration tests
+        run: pytest tests/integration/
+
+      - name: Run end-to-end tests
+        run: pytest tests/e2e/
+
+      - name: Merge dev into staging
+        if: success()
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: dev
+          target_branch: staging
+          github_token: ${{ secrets.GITHUB_TOKEN }}
