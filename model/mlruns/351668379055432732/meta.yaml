@@ -1,0 +1,6 @@
+artifact_location: file:///c:/Users/nadit/Downloads/HousePricePredictor/model/mlruns/351668379055432732
+creation_time: 1737937567212
+experiment_id: '351668379055432732'
+last_update_time: 1737937567212
+lifecycle_stage: active
+name: PolynomialRegressionExperiment
