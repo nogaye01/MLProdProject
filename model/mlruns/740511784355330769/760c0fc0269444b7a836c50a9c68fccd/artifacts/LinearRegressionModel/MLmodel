@@ -1,4 +1,4 @@
-artifact_path: PolynomialRegressionModel
+artifact_path: LinearRegressionModel
 flavors:
   python_function:
     env:
@@ -15,6 +15,6 @@ flavors:
     sklearn_version: 1.5.1
 mlflow_version: 2.20.0
 model_size_bytes: 1190
-model_uuid: 9cff4a9403a941098f058db7885105ea
-run_id: f6c3b5cc7de14958817672163811c572
-utc_time_created: '2025-01-27 01:40:52.947516'
+model_uuid: 0b9d73afd25c44998f62dd5822a6ab2c
+run_id: 760c0fc0269444b7a836c50a9c68fccd
+utc_time_created: '2025-01-27 01:39:20.433968'

@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1737942059519
+current_stage: Production
+description: null
+last_updated_timestamp: 1737942059561
+name: PolynomialRegressionModel
+run_id: f6c3b5cc7de14958817672163811c572
+run_link: null
+source: file:///c:/Users/nadit/Downloads/HousePricePredictor/model/mlruns/351668379055432732/f6c3b5cc7de14958817672163811c572/artifacts/PolynomialRegressionModel
+status: READY
+status_message: null
+storage_location: file:///c:/Users/nadit/Downloads/HousePricePredictor/model/mlruns/351668379055432732/f6c3b5cc7de14958817672163811c572/artifacts/PolynomialRegressionModel
+user_id: null
+version: 5

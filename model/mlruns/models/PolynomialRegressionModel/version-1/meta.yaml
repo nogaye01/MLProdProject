@@ -1,8 +1,8 @@
 aliases: []
 creation_timestamp: 1737937601961
-current_stage: Production
+current_stage: Archived
 description: null
-last_updated_timestamp: 1737939809540
+last_updated_timestamp: 1737942059561
 name: PolynomialRegressionModel
 run_id: f98391af49ee43c1996dbcad0fa699bb
 run_link: null
