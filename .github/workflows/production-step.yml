@@ -2,9 +2,7 @@ name: Deploy to Production
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ['CI/CD on Staging branch']
-    types: [completed]
+ 
 
 permissions:
   contents: write
