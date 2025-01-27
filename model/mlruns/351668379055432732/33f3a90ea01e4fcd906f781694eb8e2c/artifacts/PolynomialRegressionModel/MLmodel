@@ -1,0 +1,20 @@
+artifact_path: PolynomialRegressionModel
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.9.18
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.5.1
+mlflow_version: 2.20.0
+model_size_bytes: 3803994
+model_uuid: c91e93ece9904d90be4799f87d3b6e58
+run_id: 33f3a90ea01e4fcd906f781694eb8e2c
+utc_time_created: '2025-01-27 01:15:42.734452'
