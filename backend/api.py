@@ -132,6 +132,27 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+    
+@app.route('/predictions', methods=['GET'])
+def get_predictions():
+    """Fetch saved predictions from Supabase."""
+    try:
+        # Check if Supabase is initialized
+        if supabase is None:
+            raise ValueError("Supabase client is not initialized. Cannot fetch predictions.")
+
+        # Fetch all records from the "predictions" table
+        response = supabase.table("predictions").select("*").execute()
+
+        # Extract data from the response
+        predictions = response.data
+
+        # Return the predictions as JSON
+        return jsonify(predictions)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 if __name__ == '__main__':
